@@ -22,10 +22,13 @@ public class TimerWindow : MonoBehaviour
     private Button _startButton;
 
     private float _timerTime;
+    private TimerButton _currentButton;
 
     private void Awake()
     {
         EventManager.OnTimerButtonClicked += OnTimerButtonClicked;
+        EventManager.OnTimerValueUpdate += OnTimerValueUpdate;
+        _startButton.onClick.AddListener(StartTimer);
         ShowWindow(false);
     }
 
@@ -36,11 +39,32 @@ public class TimerWindow : MonoBehaviour
 
     private void OnDestroy()
     {
+        EventManager.OnTimerValueUpdate -= OnTimerValueUpdate;
         EventManager.OnTimerButtonClicked -= OnTimerButtonClicked;
+        _startButton.onClick.RemoveAllListeners();
+    }
+
+    private void OnTimerValueUpdate(object sender, float newValue)
+    {
+        if (!gameObject.activeSelf)
+        {
+            return;
+        }
+        if (_currentButton == null)
+        {
+            return;
+        }
+        var button = sender as TimerButton;
+        if (button != _currentButton)
+        {
+            return;
+        }
+        SetData(newValue);
     }
 
     private void OnTimerButtonClicked(object sender, float timerValue)
     {
+        _currentButton = sender as TimerButton;
         SetData(timerValue);
         ShowWindow(true);
     }
@@ -48,6 +72,7 @@ public class TimerWindow : MonoBehaviour
     private void SetData(float timerValue)
     {
         _timerTime = timerValue;
+        _timerText.text = TimerController.GetFormattedTime(timerValue);
     }
 
     private void ShowWindow(bool state)
@@ -55,8 +80,27 @@ public class TimerWindow : MonoBehaviour
         gameObject.SetActive(state);
     }
 
-    private IEnumerator ShowWindowRoutine( bool isOpened)
+    private IEnumerator ShowWindowRoutine(bool isOpened)
     {
-        yield return null;
+        var timer = 0f;
+        while (true)
+        {
+            timer += Time.deltaTime;
+            var animationValue = _windowAnimation.Evaluate(timer / Constants.WindowAnimationTime);
+            _selfRect.localScale = new Vector3(animationValue, animationValue, animationValue);
+            if (timer > Constants.WindowAnimationTime)
+            {
+                _selfRect.localScale = Vector3.one;
+                yield break;
+            }
+            yield return null;
+        }
+    }
+
+    private void StartTimer()
+    {
+        _currentButton.StartCountDown();
+        _currentButton = null;
+        ShowWindow(false);
     }
 }

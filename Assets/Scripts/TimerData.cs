@@ -9,12 +9,12 @@ public class TimerData
     private float _currentValue;
     private int _id;
 
-    public bool AlreadyStarted => _currentValue != 0;
+    public bool Started => _currentValue != -1;
     public float Time
     {
         get
         {
-            if(_currentValue == -1)
+            if (_currentValue == -1)
             {
                 return _timeValue;
             }

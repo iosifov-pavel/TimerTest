@@ -40,6 +40,10 @@ public class TimerButton : MonoBehaviour
             return;
         }
         StartCoroutine(ButtonAnimationRoutine());
+        if (_timerData.Started)
+        {
+            StartCountDown();
+        }
     }
 
     private void SetTimerText()
@@ -83,6 +87,7 @@ public class TimerButton : MonoBehaviour
 
     private IEnumerator StartCountodwnRoutine()
     {
+        _buttonBack.color = Constants.RunningColor;
         while (true)
         {
             yield return _secondWait;

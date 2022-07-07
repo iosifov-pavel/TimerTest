@@ -20,7 +20,7 @@ public class AddTimerWindow : MonoBehaviour
         ShowWindow(false);
     }
 
-    public void ShowWindow( bool state)
+    public void ShowWindow(bool state)
     {
         gameObject.SetActive(state);
     }
@@ -28,7 +28,7 @@ public class AddTimerWindow : MonoBehaviour
     private void CheckInput(string value)
     {
         _okButton.interactable = false;
-        if(float.TryParse(value, out _timerValue))
+        if (float.TryParse(value, out _timerValue))
         {
             _okButton.interactable = true;
         }

@@ -12,4 +12,7 @@ public static class Constants
     public const int MinutesInHours = 60;
 
     public static readonly Color AttractionColor = new Color(180/255f, 200/255f, 100/255f);
+    public static readonly Color RunningColor = new Color(160 / 255f, 80 / 255f, 90 / 255f);
+
+    public const string SavePath = "/savedata.dat";
 }

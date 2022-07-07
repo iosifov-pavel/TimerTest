@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,6 +33,7 @@ public class TimerController : MonoBehaviour
     {
         EventManager.OnAddNewTimer += OnAddNewTimer;
         _timers = new List<TimerData>();
+        LoadData();
         SetPresets();
         SetWindow();
         SetAddTimerButton();
@@ -53,6 +56,10 @@ public class TimerController : MonoBehaviour
 
     private void SetPresets()
     {
+        if (_timers.Count > 0)
+        {
+            return;
+        }
         foreach (var baseValue in Constants.StartValues)
         {
             var indexOfValue = Constants.StartValues.IndexOf(baseValue);
@@ -108,6 +115,39 @@ public class TimerController : MonoBehaviour
         else
         {
             return $"{seconds - minutes * Constants.SecondsInMinute}";
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveData();
+    }
+
+    private void SaveData()
+    {
+        var savePath = Application.persistentDataPath + Constants.SavePath;
+        using (FileStream fs = new FileStream(savePath, FileMode.OpenOrCreate))
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(fs, _timers);
+        }
+    }
+
+    private void LoadData()
+    {
+        var savePath = Application.persistentDataPath + Constants.SavePath;
+        using (FileStream fs = new FileStream(savePath, FileMode.OpenOrCreate))
+        {
+            if (fs.Length <= 0)
+            {
+                return;
+            }
+            BinaryFormatter formatter = new BinaryFormatter();
+            var deserializedTimers = (List<TimerData>)formatter.Deserialize(fs);
+            if (deserializedTimers.Count > 0)
+            {
+                _timers = deserializedTimers;
+            }
         }
     }
 }

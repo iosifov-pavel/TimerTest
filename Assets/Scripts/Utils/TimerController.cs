@@ -70,7 +70,6 @@ public class TimerController : MonoBehaviour
 
     private void OnAddNewTimer(object sender, float newTimerValue)
     {
-        var newTimerIndex = _timers.Count;
         var newTimer = new TimerData(newTimerValue);
         _timers.Add(newTimer);
         var newButton = Instantiate(_buttonPrefab, _buttonsContainer.transform);

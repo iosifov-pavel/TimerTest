@@ -15,4 +15,6 @@ public static class Constants
     public static readonly Color AttractionColor = new Color(200 / 255f, 160 / 255f, 20 / 255f);
     
     public const string SavePath = "/savedata.bin";
+
+    public const int MaxTimerLength = 6;
 }

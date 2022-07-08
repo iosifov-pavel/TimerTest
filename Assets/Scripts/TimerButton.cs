@@ -16,14 +16,11 @@ public class TimerButton : MonoBehaviour
     private AnimationCurve _attractionCurve;
 
     private TimerData _timerData;
-    private float _counter;
-    private WaitForSeconds _secondWait;
     private bool _inAttractionState;
 
     private void Awake()
     {
         _timerButton.onClick.AddListener(ButtonAction);
-        _secondWait = new WaitForSeconds(1);
     }
 
     private void OnDestroy()
@@ -88,18 +85,25 @@ public class TimerButton : MonoBehaviour
     private IEnumerator StartCountodwnRoutine()
     {
         _buttonBack.color = Constants.RunningColor;
+        var timer = 0f;
         while (true)
         {
-            yield return _secondWait;
-            _timerData.Time = Mathf.Max(0, _timerData.Time - 1);
-            SetTimerText();
-            EventManager.OnTimerValueUpdate?.Invoke(this, _timerData.Time);
+            timer += Time.deltaTime;
+            var changeInSeconds = (int)timer;
+            if(changeInSeconds != 0)
+            {
+                _timerData.Time = Mathf.Max(0, _timerData.Time - changeInSeconds);
+                timer -= changeInSeconds;
+                SetTimerText();
+                EventManager.OnTimerValueUpdate?.Invoke(this, _timerData.Time);
+            }
             if (_timerData.Time == 0)
             {
                 _timerData.Reset();
                 SetTimerText();
                 break;
             }
+            yield return null;
         }
         _inAttractionState = true;
         StartCoroutine(AttractionRoutine());

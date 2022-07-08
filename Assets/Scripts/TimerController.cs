@@ -53,7 +53,6 @@ public class TimerController : MonoBehaviour
         var newButton = Instantiate(_buttonPrefab, _buttonsContainer);
         newButton.SetData(newTimer);
     }
-
     private void LoadData()
     {
         var savedata = SaveManager.LoadData();
@@ -67,7 +66,6 @@ public class TimerController : MonoBehaviour
         }
         _timers = savedata.Data;
     }
-
     private void SetPresets()
     {
         if (_timers.Count > 0)
@@ -81,7 +79,6 @@ public class TimerController : MonoBehaviour
             _timers.Add(baseTimer);
         }
     }
-
     private void SetWindow()
     {
         if (_window == null)
@@ -118,18 +115,8 @@ public class TimerController : MonoBehaviour
     {
         var minutes = (int)seconds / Constants.SecondsInMinute;
         var hours = minutes / Constants.MinutesInHours;
-        if (hours > 0)
-        {
-            return $"{hours}:{minutes - Constants.MinutesInHours * hours}:{seconds - minutes * Constants.SecondsInMinute}";
-        }
-        else if (minutes > 0)
-        {
-            return $"{minutes - Constants.MinutesInHours * hours}:{seconds - minutes * Constants.SecondsInMinute}";
-        }
-        else
-        {
-            return $"{seconds - minutes * Constants.SecondsInMinute}";
-        }
+        var resulrString = String.Format("{0:0#}:{1:0#}:{2:0#}", hours, minutes - Constants.MinutesInHours * hours, seconds - minutes * Constants.SecondsInMinute);
+        return resulrString;
     }
 
     private void OnApplicationQuit()

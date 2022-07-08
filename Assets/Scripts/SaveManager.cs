@@ -24,7 +24,7 @@ public static class SaveManager
         {
             using (BinaryReader br = new BinaryReader(fs))
             {
-                while (br.BaseStream.Length != br.BaseStream.Position)
+                while (br.PeekChar() > -1)
                 {
                     var jsonData = br.ReadString();
                     result = JsonUtility.FromJson<SaveData>(jsonData);

@@ -54,6 +54,20 @@ public class TimerController : MonoBehaviour
         newButton.SetData(newTimer);
     }
 
+    private void LoadData()
+    {
+        var savedata = SaveManager.LoadData();
+        if(savedata == null)
+        {
+            return;
+        }
+        if(savedata.Data?.Count == 0)
+        {
+            return;
+        }
+        _timers = savedata.Data;
+    }
+
     private void SetPresets()
     {
         if (_timers.Count > 0)
@@ -120,34 +134,7 @@ public class TimerController : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        SaveData();
-    }
-
-    private void SaveData()
-    {
-        var savePath = Application.persistentDataPath + Constants.SavePath;
-        using (FileStream fs = new FileStream(savePath, FileMode.OpenOrCreate))
-        {
-            BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Serialize(fs, _timers);
-        }
-    }
-
-    private void LoadData()
-    {
-        var savePath = Application.persistentDataPath + Constants.SavePath;
-        using (FileStream fs = new FileStream(savePath, FileMode.OpenOrCreate))
-        {
-            if (fs.Length <= 0)
-            {
-                return;
-            }
-            BinaryFormatter formatter = new BinaryFormatter();
-            var deserializedTimers = (List<TimerData>)formatter.Deserialize(fs);
-            if (deserializedTimers.Count > 0)
-            {
-                _timers = deserializedTimers;
-            }
-        }
+        var saveData = new SaveData(_timers);
+        SaveManager.SaveData(saveData);
     }
 }

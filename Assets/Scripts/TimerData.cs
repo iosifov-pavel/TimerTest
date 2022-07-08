@@ -5,8 +5,11 @@ using UnityEngine;
 [System.Serializable]
 public class TimerData
 {
+    [SerializeField]
     private float _timeValue;
+    [SerializeField]
     private float _currentValue;
+    [SerializeField]
     private int _id;
 
     public bool Started => _currentValue != -1;

@@ -14,6 +14,5 @@ public static class Constants
     public static readonly Color RunningColor = new Color(200/255f, 160/255f, 120/255f);
     public static readonly Color AttractionColor = new Color(200 / 255f, 160 / 255f, 20 / 255f);
     
-
-    public const string SavePath = "/savedata.dat";
+    public const string SavePath = "/savedata.bin";
 }

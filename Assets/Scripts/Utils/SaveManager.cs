@@ -26,8 +26,15 @@ public static class SaveManager
             {
                 while (br.PeekChar() > -1)
                 {
-                    var jsonData = br.ReadString();
-                    result = JsonUtility.FromJson<SaveData>(jsonData);
+                    try
+                    {
+                        var jsonData = br.ReadString();
+                        result = JsonUtility.FromJson<SaveData>(jsonData);
+                    }
+                    catch
+                    {
+                        Debug.LogError("Load data failed!");
+                    }
                 }
             }
         }

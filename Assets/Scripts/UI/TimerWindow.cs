@@ -17,11 +17,13 @@ public class TimerWindow : MonoBehaviour
     private AnimationCurve _closeAnimation;
     [Header("Buttons")]
     [SerializeField]
-    private Button _minusButton;
+    private LongPressButton _minusButton;
     [SerializeField]
-    private Button _plusButton;
+    private LongPressButton _plusButton;
     [SerializeField]
     private Button _startButton;
+    [SerializeField]
+    private Button _closeButton;
 
     private float _timerTime;
     private TimerButton _currentButton;
@@ -31,8 +33,9 @@ public class TimerWindow : MonoBehaviour
         EventManager.OnTimerButtonClicked += OnTimerButtonClicked;
         EventManager.OnTimerValueUpdate += OnTimerValueUpdate;
         _startButton.onClick.AddListener(StartTimer);
-        _minusButton.onClick.AddListener(() => ChangeTimer(false));
-        _plusButton.onClick.AddListener(() => ChangeTimer(true));
+        _minusButton.SetCallback(ChangeTimer, false);
+        _plusButton.SetCallback(ChangeTimer, true);
+        _closeButton.onClick.AddListener(() => ShowWindow(false));
         ShowWindow(false);
     }
 
@@ -46,8 +49,6 @@ public class TimerWindow : MonoBehaviour
         EventManager.OnTimerValueUpdate -= OnTimerValueUpdate;
         EventManager.OnTimerButtonClicked -= OnTimerButtonClicked;
         _startButton.onClick.RemoveAllListeners();
-        _minusButton.onClick.RemoveAllListeners();
-        _plusButton.onClick.RemoveAllListeners();
     }
 
     private void OnTimerValueUpdate(object sender, float newValue)
@@ -71,6 +72,7 @@ public class TimerWindow : MonoBehaviour
     private void OnTimerButtonClicked(object sender, float timerValue)
     {
         _currentButton = sender as TimerButton;
+        _startButton.interactable = !_currentButton.Started;
         SetData(timerValue);
         ShowWindow(true);
     }
@@ -113,10 +115,9 @@ public class TimerWindow : MonoBehaviour
         StartCoroutine(ShowWindowRoutine(false, () => ShowWindow(false)));
     }
 
-    private void ChangeTimer(bool increaseValue)
+    private void ChangeTimer(float valueChange)
     {
-        var change = increaseValue ? 1 : -1;
-        SetData(_timerTime + change);
+        SetData(_timerTime + valueChange);
         _currentButton?.UpdateTime(_timerTime);
     }
 }

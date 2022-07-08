@@ -119,9 +119,12 @@ public class TimerController : MonoBehaviour
         return resulrString;
     }
 
-    private void OnApplicationQuit()
+    private void OnApplicationFocus(bool focus)
     {
-        var saveData = new SaveData(_timers);
-        SaveManager.SaveData(saveData);
+        if( !focus)
+        {
+            var saveData = new SaveData(_timers);
+            SaveManager.SaveData(saveData);
+        }
     }
 }

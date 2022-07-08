@@ -18,6 +18,8 @@ public class TimerButton : MonoBehaviour
     private TimerData _timerData;
     private bool _inAttractionState;
 
+    public bool Started => _timerData != null && _timerData.Started;
+
     private void Awake()
     {
         _timerButton.onClick.AddListener(ButtonAction);

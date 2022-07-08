@@ -37,18 +37,18 @@ public class AddTimerWindow : MonoBehaviour
         {
             text = text.Substring(0, Constants.MaxTimerLength);
         }
-        if (float.TryParse(text, out var seconds))
+        if (int.TryParse(text, out var seconds))
         {
             var hours = 0;
             var minutes = 0;
             if(seconds >= 10000)
             {
-                hours = (int) seconds / 10000;
+                hours = seconds / 10000;
                 seconds = seconds - hours * 10000;
             }
             if(seconds >= 100)
             {
-                minutes = (int) seconds / 100;
+                minutes = seconds / 100;
                 seconds = seconds - minutes * 100;
             }
             var result = seconds + minutes * Constants.SecondsInMinute + hours * Constants.SecondsInMinute * Constants.MinutesInHours;

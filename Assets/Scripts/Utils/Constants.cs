@@ -17,4 +17,8 @@ public static class Constants
     public const string SavePath = "/savedata.bin";
 
     public const int MaxTimerLength = 6;
+
+    public const float LongPressButtonDecreaseScale = 0.9f;
+    public const float LongPressButtonInitialTime = 0.25f;
+    public const float LongPressButtonMinAwaitTime = 0.02f;
 }

@@ -3,8 +3,12 @@ using UnityEngine;
 
 public static class Constants
 {
+    public const float InitialButtonDelay = 0.45f;
     public const float WindowAnimationTime = .35f;
     public const float AttractionAnimationTime = 1f;
+    public const float ButtonDelay = 0.25f;
+    public const float ButtonMoveTime = 0.35f;
+
     public static readonly List<float> StartValues = new List<float> { 5f, 10f, 15f };
 
     public const int SecondsInMinute = 60;

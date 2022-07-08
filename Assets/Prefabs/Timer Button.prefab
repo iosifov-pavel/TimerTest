@@ -135,6 +135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc4eb4e66e37ff947b5c20b69170268a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _selfRect: {fileID: 2996099950229380677}
   _buttonBack: {fileID: 2996099950229380678}
   _timerButton: {fileID: 2996099950229380679}
   _timerText: {fileID: 2996099950715486746}

@@ -7,11 +7,12 @@ public static class SaveManager
     public static void SaveData(SaveData data)
     {
         var savePath = Application.persistentDataPath + Constants.SavePath;
-        using (FileStream fs = new FileStream(savePath, FileMode.OpenOrCreate))
+        using (FileStream fs = new FileStream(savePath, FileMode.Create))
         {
             using (BinaryWriter bw = new BinaryWriter(fs, Encoding.UTF8, false))
             {
                 var jsonData = JsonUtility.ToJson(data);
+                fs.SetLength(0);
                 bw.Write(jsonData);
             }
         }
@@ -19,7 +20,8 @@ public static class SaveManager
 
     public static SaveData LoadData()
     {
-        SaveData result = null;
+        var failedToLoad = false;
+        SaveData result = new SaveData();
         var savePath = Application.persistentDataPath + Constants.SavePath;
         using (FileStream fs = new FileStream(savePath, FileMode.OpenOrCreate))
         {
@@ -34,11 +36,17 @@ public static class SaveManager
                     }
                     catch
                     {
-                        Debug.LogError("Load data failed!");
+                        Debug.LogError("Save data corrupted!");
+                        failedToLoad = true;
                         br.Close();
+                        break;
                     }
                 }
             }
+        }
+        if (failedToLoad)
+        {
+            SaveData(result);
         }
         return result;
     }

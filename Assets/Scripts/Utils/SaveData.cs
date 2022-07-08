@@ -9,4 +9,9 @@ public class SaveData
     {
         Timers = timers;
     }
+
+    public SaveData()
+    {
+        Timers = new List<TimerData>();
+    }
 }

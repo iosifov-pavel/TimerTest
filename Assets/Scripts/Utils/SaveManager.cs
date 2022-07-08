@@ -1,4 +1,5 @@
 using System.IO;
+using System.Text;
 using UnityEngine;
 
 public static class SaveManager
@@ -8,7 +9,7 @@ public static class SaveManager
         var savePath = Application.persistentDataPath + Constants.SavePath;
         using (FileStream fs = new FileStream(savePath, FileMode.OpenOrCreate))
         {
-            using (BinaryWriter bw = new BinaryWriter(fs))
+            using (BinaryWriter bw = new BinaryWriter(fs, Encoding.UTF8, false))
             {
                 var jsonData = JsonUtility.ToJson(data);
                 bw.Write(jsonData);
@@ -22,9 +23,9 @@ public static class SaveManager
         var savePath = Application.persistentDataPath + Constants.SavePath;
         using (FileStream fs = new FileStream(savePath, FileMode.OpenOrCreate))
         {
-            using (BinaryReader br = new BinaryReader(fs))
+            using (BinaryReader br = new BinaryReader(fs, Encoding.UTF8, false))
             {
-                while (br.PeekChar() > -1)
+                while (br.BaseStream.Length != br.BaseStream.Position)
                 {
                     try
                     {
@@ -34,6 +35,7 @@ public static class SaveManager
                     catch
                     {
                         Debug.LogError("Load data failed!");
+                        br.Close();
                     }
                 }
             }

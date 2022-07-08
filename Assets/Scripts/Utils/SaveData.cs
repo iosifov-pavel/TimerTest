@@ -1,14 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 [System.Serializable]
 public class SaveData
 {
-    public List<TimerData> Data;
+    public List<TimerData> Timers;
 
-    public SaveData(List<TimerData> data)
+    public SaveData(List<TimerData> timers)
     {
-        Data = data;
+        Timers = timers;
     }
 }

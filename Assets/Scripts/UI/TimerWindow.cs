@@ -1,8 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class TimerWindow : MonoBehaviour
@@ -30,6 +29,7 @@ public class TimerWindow : MonoBehaviour
 
     private void Awake()
     {
+        EventManager.OnTimeIsUp += OnTimeIsUp;
         EventManager.OnTimerButtonClicked += OnTimerButtonClicked;
         EventManager.OnTimerValueUpdate += OnTimerValueUpdate;
         _startButton.onClick.AddListener(StartTimer);
@@ -39,16 +39,15 @@ public class TimerWindow : MonoBehaviour
         ShowWindow(false);
     }
 
+
     private void OnEnable()
     {
         StartCoroutine(ShowWindowRoutine(true));
     }
-
-    private void OnDestroy()
+    private void OnTimeIsUp(object sender, EventArgs e)
     {
-        EventManager.OnTimerValueUpdate -= OnTimerValueUpdate;
-        EventManager.OnTimerButtonClicked -= OnTimerButtonClicked;
-        _startButton.onClick.RemoveAllListeners();
+        _currentButton = default;
+        ShowWindow(false);
     }
 
     private void OnTimerValueUpdate(object sender, float newValue)
@@ -86,6 +85,7 @@ public class TimerWindow : MonoBehaviour
     private void ShowWindow(bool state)
     {
         gameObject.SetActive(state);
+        EventManager.OnUpdateWindowState(this, state);
     }
 
     private IEnumerator ShowWindowRoutine(bool isOpened, Action afterAnimationCallback = null)
@@ -117,7 +117,8 @@ public class TimerWindow : MonoBehaviour
 
     private void ChangeTimer(float valueChange)
     {
-        SetData(_timerTime + valueChange);
+        var newValue = Mathf.Max(0, _timerTime + valueChange);
+        SetData(newValue);
         _currentButton?.UpdateTime(_timerTime);
     }
 }

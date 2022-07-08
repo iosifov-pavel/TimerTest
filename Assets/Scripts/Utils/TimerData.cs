@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -9,8 +7,6 @@ public class TimerData
     private float _timeValue;
     [SerializeField]
     private float _currentValue;
-    [SerializeField]
-    private int _id;
 
     public bool Started => _currentValue != -1;
     public float Time
@@ -28,9 +24,8 @@ public class TimerData
             _currentValue = value;
         }
     }
-    public TimerData(int id, float time, float currentValue = -1)
+    public TimerData(float time, float currentValue = -1)
     {
-        _id = id;
         _timeValue = time;
         _currentValue = currentValue;
     }

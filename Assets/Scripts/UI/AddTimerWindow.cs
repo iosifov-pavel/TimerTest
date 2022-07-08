@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class AddTimerWindow : MonoBehaviour
 {
@@ -19,21 +18,30 @@ public class AddTimerWindow : MonoBehaviour
 
     private void Awake()
     {
-        _input.onValueChanged.AddListener( CheckInput );
+        EventManager.OnTimeIsUp += OnTimeIsUp;
+        _input.onValueChanged.AddListener(CheckInput);
         _okButton.onClick.AddListener(OkButtonAction);
         _closeButton.onClick.AddListener(() => ShowWindow(false));
+        _okButton.interactable = false;
+        ShowWindow(false);
+    }
+
+    private void OnTimeIsUp(object sender, EventArgs e)
+    {
+        _input.text = default;
         ShowWindow(false);
     }
 
     public void ShowWindow(bool state)
     {
         gameObject.SetActive(state);
+        EventManager.OnUpdateWindowState(this, state);
     }
 
     private void CheckInput(string text)
     {
         _timeAmountText.gameObject.SetActive(text.Length > 0);
-        if( text.Length > Constants.MaxTimerLength)
+        if (text.Length > Constants.MaxTimerLength)
         {
             text = text.Substring(0, Constants.MaxTimerLength);
         }
@@ -41,15 +49,15 @@ public class AddTimerWindow : MonoBehaviour
         {
             var hours = 0;
             var minutes = 0;
-            if(seconds >= 10000)
+            if (seconds >= Constants.ValueEnoughForHours)
             {
-                hours = seconds / 10000;
-                seconds = seconds - hours * 10000;
+                hours = seconds / Constants.ValueEnoughForHours;
+                seconds = seconds - hours * Constants.ValueEnoughForHours;
             }
-            if(seconds >= 100)
+            if (seconds >= Constants.ValueEnoughForMinutes)
             {
-                minutes = seconds / 100;
-                seconds = seconds - minutes * 100;
+                minutes = seconds / Constants.ValueEnoughForMinutes;
+                seconds = seconds - minutes * Constants.ValueEnoughForMinutes;
             }
             var result = seconds + minutes * Constants.SecondsInMinute + hours * Constants.SecondsInMinute * Constants.MinutesInHours;
             _timeAmountText.text = $"{hours:0#}:{minutes:0#}:{seconds:0#}";
@@ -62,6 +70,7 @@ public class AddTimerWindow : MonoBehaviour
 
     private void OkButtonAction()
     {
+        _input.text = default;
         EventManager.OnAddNewTimer?.Invoke(this, _timerValue);
         ShowWindow(false);
     }

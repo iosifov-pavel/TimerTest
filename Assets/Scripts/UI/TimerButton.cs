@@ -1,5 +1,5 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,11 +23,6 @@ public class TimerButton : MonoBehaviour
     private void Awake()
     {
         _timerButton.onClick.AddListener(ButtonAction);
-    }
-
-    private void OnDestroy()
-    {
-        _timerButton.onClick.RemoveAllListeners();
     }
 
     public void SetData(TimerData timerData, bool withAnimation = false)
@@ -61,7 +56,7 @@ public class TimerButton : MonoBehaviour
     }
     public void UpdateTime(float newTime)
     {
-        _timerData.Time = newTime;
+        _timerData.Time = Mathf.Max(0, newTime);
         SetTimerText();
     }
 
@@ -92,7 +87,7 @@ public class TimerButton : MonoBehaviour
         {
             timer += Time.deltaTime;
             var changeInSeconds = (int)timer;
-            if(changeInSeconds != 0)
+            if (changeInSeconds != 0)
             {
                 _timerData.Time = Mathf.Max(0, _timerData.Time - changeInSeconds);
                 timer -= changeInSeconds;
@@ -115,6 +110,7 @@ public class TimerButton : MonoBehaviour
     {
         var timer = 0f;
         _buttonBack.color = Constants.AttractionColor;
+        EventManager.OnTimeIsUp?.Invoke(this, EventArgs.Empty);
         while (_inAttractionState)
         {
             timer += Time.deltaTime;

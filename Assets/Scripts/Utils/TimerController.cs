@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,6 +21,8 @@ public class TimerController : MonoBehaviour
     private RectTransform _addTimerButtonContainer;
     [SerializeField]
     private RectTransform _addTimerWindowContainer;
+    [SerializeField]
+    private CanvasGroup _buttonsGroup;
 
     private TimerWindow _window;
     private AddTimerWindow _addTimerWindow;
@@ -32,6 +31,7 @@ public class TimerController : MonoBehaviour
     private void Awake()
     {
         EventManager.OnAddNewTimer += OnAddNewTimer;
+        EventManager.OnUpdateWindowState += OnUpdateWindowState;
         _timers = new List<TimerData>();
         LoadData();
         SetPresets();
@@ -40,15 +40,15 @@ public class TimerController : MonoBehaviour
         CreateButtons();
     }
 
-    private void OnDestroy()
+    private void OnUpdateWindowState(object sender, bool windowState)
     {
-        EventManager.OnAddNewTimer -= OnAddNewTimer;
+        _buttonsGroup.alpha = windowState ? 0 : 1;
     }
 
     private void OnAddNewTimer(object sender, float newTimerValue)
     {
         var newTimerIndex = _timers.Count;
-        var newTimer = new TimerData(newTimerIndex, newTimerValue);
+        var newTimer = new TimerData(newTimerValue);
         _timers.Add(newTimer);
         var newButton = Instantiate(_buttonPrefab, _buttonsContainer);
         newButton.SetData(newTimer);
@@ -56,15 +56,15 @@ public class TimerController : MonoBehaviour
     private void LoadData()
     {
         var savedata = SaveManager.LoadData();
-        if(savedata == null)
+        if (savedata == null)
         {
             return;
         }
-        if(savedata.Data?.Count == 0)
+        if (savedata.Timers?.Count == 0)
         {
             return;
         }
-        _timers = savedata.Data;
+        _timers = savedata.Timers;
     }
     private void SetPresets()
     {
@@ -75,7 +75,7 @@ public class TimerController : MonoBehaviour
         foreach (var baseValue in Constants.StartValues)
         {
             var indexOfValue = Constants.StartValues.IndexOf(baseValue);
-            var baseTimer = new TimerData(indexOfValue, baseValue);
+            var baseTimer = new TimerData(baseValue);
             _timers.Add(baseTimer);
         }
     }
@@ -121,7 +121,10 @@ public class TimerController : MonoBehaviour
 
     private void OnApplicationFocus(bool focus)
     {
-        if( !focus)
+        // использовал именно это событие, так как оно чуток более надёжно, чем OnApplicationQuit
+        // а сохранять данные каждую секунду, как изменились таймеры считаю не самым лучшим вариантом
+        // Как альтернатива можно было бы сохранять данные каждые n секунд, но решил оставить в таком виде
+        if (!focus)
         {
             var saveData = new SaveData(_timers);
             SaveManager.SaveData(saveData);
